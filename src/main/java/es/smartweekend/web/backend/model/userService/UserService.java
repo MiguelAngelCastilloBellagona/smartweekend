@@ -46,7 +46,7 @@ public interface UserService {
 	
 	public long getAllUsersTAMADMIN(String sessionId) throws ServiceException;
 	
-	public List<User> findUsersByNameADMIN(String sessionId, String name, int startIndex, int maxResults)  throws ServiceException;
+	public List<User> findUsersByNameADMIN(String sessionId, String name) throws ServiceException;
 	
 	public void removeUserADMIN(String sessionId, int userId) throws ServiceException;
 	

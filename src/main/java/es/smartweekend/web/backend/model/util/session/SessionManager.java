@@ -8,15 +8,8 @@ import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import es.smartweekend.web.backend.model.user.UserDao;
-
 
 public class SessionManager {
-	
-	@Autowired
-	static UserDao userDao;
 	
 	private static ConcurrentHashMap<String, Session> openSessions = new ConcurrentHashMap<String, Session>();
 	

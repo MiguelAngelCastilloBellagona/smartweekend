@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
 		User admin = userDao.findUserBylogin(ADMIN_LOGIN);
 		if (admin == null)
-			admin = new User("E|M|N|R|S|U|", "Administrador", ADMIN_LOGIN,
+			admin = new User("EMNRSU", "Administrador", ADMIN_LOGIN,
 					hashPassword(INITIAL_ADMIN_PASS), "0", "adminMail", "-",
 					"-", Calendar.getInstance(TimeZone.getTimeZone("UTC")),
 					"ES");
@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	@Transactional(readOnly=true)
 	public boolean checkPermissions(User user, String permisionLevelRequired) {
 		try {
 			return userDao.find(user.getUserId()).getPremissions().contains(permisionLevelRequired);
@@ -213,6 +214,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public void changeUserPasswordUSER(String sessionId, String oldPassword, String newPassword) throws ServiceException {
 		Session session = SessionManager.getSession(sessionId);
 		try {
@@ -230,6 +232,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getUserPermissionsUSER(String sessionId)
 			throws ServiceException {
 		Session session = SessionManager.getSession(sessionId);
@@ -243,22 +246,36 @@ public class UserServiceImpl implements UserService {
 	// ADMIN
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Session> getAllUserSessionsADMIN(String sessionId, int userId)
 			throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		SessionManager.getAllUserSessions(userId);
+		
 		return null;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void closeAllUserSessionsADMIN(String sessionId, int userId)
 			throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		SessionManager.closeAllUserSessions(userId);
 
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<User> getAllUsersADMIN(String sessionId, int startIndex,
 			int maxResults, String orderBy, boolean desc)
 			throws ServiceException {
@@ -272,66 +289,157 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public long getAllUsersTAMADMIN(String sessionId) throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-		return 0;
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		return userDao.getAllUsersTAM();
 	}
 
 	@Override
-	public List<User> findUsersByNameADMIN(String sessionId, String name,
-			int startIndex, int maxResults) throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly = true)
+	public List<User> findUsersByNameADMIN(String sessionId, String name) 
+			throws ServiceException {
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		return userDao.findUsersByName(name);
 	}
 
 	@Override
+	@Transactional
 	public void removeUserADMIN(String sessionId, int userId)
 			throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			userDao.remove(userId);
+		} catch (InstanceException e) {}
 
 	}
 
 	@Override
+	@Transactional
 	public void changeUserDataADMIN(String sessionId, int userId, User userData)
 			throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			User user = userDao.find(userId);
+			if(userData.getName()!=null) user.setName(userData.getName());
+			User u = userDao.findUserByEmail(userData.getEmail());
+			if(u!=null) 
+				if(!(u.getUserId()==user.getUserId())) 
+					throw new ServiceException(ServiceException.DUPLICATED_FIELD,"email");
+			if(userData.getEmail()!=null) user.setEmail(userData.getEmail());
+			if(userData.getPhoneNumber()!=null )user.setPhoneNumber(userData.getPhoneNumber());
+			if(userData.getShirtSize()!=null) user.setShirtSize(userData.getShirtSize());
+			if(userData.getDni()!=null )user.setDni(userData.getDni());
+			if(userData.getDob()!=null )user.setDob(userData.getDob());
+			userDao.save(user);
+		} catch (InstanceException e) {
+			throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"User");
+		}
 	}
 
 	@Override
+	@Transactional
 	public void changeUserPasswordADMIN(String sessionId, int userId,
 			String oldPassword, String newPassword) throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			User user = userDao.find(userId);
+			user.setSecondPasswordExpDate(null);
+			user.setPassword(hashPassword(newPassword));
+			user.setSecondPassword(user.getSecondPassword());
+			userDao.save(user);	
+		} catch (InstanceException e) {
+			throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"User");
+		}	
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getUserPermissionsADMIN(String sessionId, int userId)
 			throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-		return null;
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			return userDao.find(userId).getPremissions();
+		} catch (InstanceException e) {
+			throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"User");
+		}
 	}
 
 	@Override
+	@Transactional
 	public String addUserPermissionsADMIN(String sessionId, int userId,
 			String permission) throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-		return null;
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			User user = userDao.find(userId);
+			if(!user.getPremissions().contains(permission)) 
+			{
+				user.setPremissions(user.getPremissions() + permission);
+				userDao.save(user);
+				return user.getPremissions();
+			}
+			return user.getPremissions();
+		} catch (InstanceException e) {
+			throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"User");
+		}
 	}
 
 	@Override
 	public String removeUserPermissionsADMIN(String sessionId, int userId,
 			String permission) throws ServiceException {
-		if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-		// TODO Auto-generated method stub
-		return null;
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.INVALID_SESSION);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			User user = userDao.find(userId);
+			if(!user.getPremissions().contains(permission)) 
+			{
+				user.setPremissions(user.getPremissions().replace(permission,""));
+				userDao.save(user);
+				return user.getPremissions();
+			}
+			return user.getPremissions();
+		} catch (InstanceException e) {
+			throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"User");
+		}
 	}
 
 }
