@@ -1,5 +1,6 @@
 package es.smartweekend.web.backend.jersey.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -33,6 +34,9 @@ import es.smartweekend.web.backend.model.util.session.SessionManager;
  */
 @Path("user")
 public class UserResource {
+	
+	private String[] s = {"userId","name","login","dni","email","phoneNumber","shirtSize","dob"};
+	private ArrayList<String> l;
 	
 	static class ChangePasswordData {
 		private String oldPassword;
@@ -97,6 +101,8 @@ public class UserResource {
 	public UserResource(){
 		this.userService  = ApplicationContextProvider.getApplicationContext().getBean(UserService.class);
 		this.mailService = ApplicationContextProvider.getApplicationContext().getBean(MailService.class);
+		l = new ArrayList<String>();
+		l.add(s[0]);l.add(s[1]);l.add(s[2]);l.add(s[3]);l.add(s[4]);l.add(s[5]);l.add(s[6]);l.add(s[7]);
 	}
     
 	//ANONYMOUS
@@ -257,6 +263,7 @@ public class UserResource {
 		boolean b = true;
 		if(desc==0) b = false;
 		try {
+			if(l.indexOf(orderBy)<0) throw new ServiceException(ServiceException.INCORRECT_FIELD,"orderBy");
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			List<User> l = userService.getAllUsersADMIN(sessionId,startIndex,cont,orderBy,b);
 			return Response.status(200).entity(l).build();

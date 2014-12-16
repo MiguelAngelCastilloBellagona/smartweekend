@@ -18,7 +18,7 @@ public class SponsorServiceImpl implements SponsorService {
 	// ANONYMOUS
 
 	@Override
-	public List<Sponsor> getAllSponsor() throws ServiceException {
+	public List<Sponsor> getAllEventSponsor(int eventId) throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -26,7 +26,19 @@ public class SponsorServiceImpl implements SponsorService {
 	// USER
 
 	// ADMIN
+	
+	@Override
+	public List<Sponsor> getAllSponsorADMIN(String sessionId, int startIndex, int cont, String orderBy, boolean desc)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	public int getAllSponsorTAMADMIN(String sessionId) throws ServiceException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	@Override
 	public Sponsor getSponsorADMIN(String sessionId, int sponsorId)
 			throws ServiceException {
