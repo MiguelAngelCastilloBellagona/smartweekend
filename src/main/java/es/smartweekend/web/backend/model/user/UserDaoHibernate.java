@@ -22,8 +22,7 @@ public class UserDaoHibernate extends GenericDaoHibernate<User,Integer> implemen
 	        	"SELECT u " +
 		        "FROM User u " +
 		        "WHERE u.login!='anonymous'" +
-	        	"ORDER BY u." + orderBy + aux
-		        ).setFirstResult(startindex).setMaxResults(maxResults);
+	        	"ORDER BY u." + orderBy + aux );
 		if(maxResults<1) return query.list();
 		else return query.setFirstResult(startindex).setMaxResults(maxResults).list();
 	}

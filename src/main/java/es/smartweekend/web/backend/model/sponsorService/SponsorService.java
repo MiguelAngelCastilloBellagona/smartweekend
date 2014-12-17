@@ -20,11 +20,11 @@ public interface SponsorService {
 	
 	public List<Sponsor> getAllSponsorADMIN(String sessionId, int startIndex, int cont, String orderBy, boolean desc) throws ServiceException;
 	
-	public int getAllSponsorTAMADMIN(String sessionId) throws ServiceException;
+	public long getAllSponsorTAMADMIN(String sessionId) throws ServiceException;
 	
 	public Sponsor getSponsorADMIN(String sessionId, int sponsorId) throws ServiceException;
 	
-	public Sponsor addSponsorADMIN(String sessionId, Sponsor sponsor) throws ServiceException;
+	public Sponsor addSponsorToEventADMIN(String sessionId, int eventId, Sponsor sponsor) throws ServiceException;
 	
 	public Sponsor changeSponsorADMIN(String sessionId, int sponsorId, Sponsor sponsorData) throws ServiceException;
 	

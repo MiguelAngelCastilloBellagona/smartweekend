@@ -251,13 +251,11 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
-		SessionManager.getAllUserSessions(userId);
-		
-		return null;
+		return SessionManager.getAllUserSessions(userId);
 	}
 
 	@Override
@@ -266,12 +264,11 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
 		SessionManager.closeAllUserSessions(userId);
-
 	}
 	
 	@Override
@@ -281,7 +278,7 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -293,7 +290,7 @@ public class UserServiceImpl implements UserService {
 	public long getAllUsersTAMADMIN(String sessionId) throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -306,7 +303,7 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -319,7 +316,7 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -335,7 +332,7 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -363,7 +360,7 @@ public class UserServiceImpl implements UserService {
 			String oldPassword, String newPassword) throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -384,7 +381,7 @@ public class UserServiceImpl implements UserService {
 			throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -401,7 +398,7 @@ public class UserServiceImpl implements UserService {
 			String permission) throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}
@@ -424,7 +421,7 @@ public class UserServiceImpl implements UserService {
 			String permission) throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
-				throw new ServiceException(ServiceException.INVALID_SESSION);
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
 		}

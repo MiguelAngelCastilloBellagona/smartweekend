@@ -93,7 +93,7 @@ public class SponsorResource {
 	public Response getAllSponsor(@HeaderParam("sessionId") String sessionId) {
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-			int i = sponsorService.getAllSponsorTAMADMIN(sessionId);
+			long i = sponsorService.getAllSponsorTAMADMIN(sessionId);
 			return Response.status(200).entity(i).build();
 		}
 		catch (ServiceException e) {
@@ -115,14 +115,14 @@ public class SponsorResource {
 		}
 	}
 	
-	@Path("/admin/addSpsonsor")
+	@Path("/admin/addSpsonsorToEvent/{eventId}")
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response addSponsor(@HeaderParam("sessionId") String sessionId, Sponsor sponsor) {
+	public Response addSponsor(@HeaderParam("sessionId") String sessionId, Sponsor sponsor, @PathParam("eventId") int eventId) {
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-			Sponsor s = sponsorService.addSponsorADMIN(sessionId, sponsor);
+			Sponsor s = sponsorService.addSponsorToEventADMIN(sessionId, eventId, sponsor);
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
