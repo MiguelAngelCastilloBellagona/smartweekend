@@ -16,7 +16,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import es.smartweekend.web.backend.jersey.resources.MailResource;
 import es.smartweekend.web.backend.jersey.resources.NewsResource;
 import es.smartweekend.web.backend.jersey.resources.SponsorResource;
 import es.smartweekend.web.backend.jersey.resources.UserResource;
@@ -64,7 +63,6 @@ public class Main {
 		rc.register(JacksonFeature.class);
 		rc.register(ServiceExceptionMapper.class);
 		
-		rc.register(MailResource.class);
 		rc.register(NewsResource.class);
 		rc.register(SponsorResource.class);
 		rc.register(UserResource.class);

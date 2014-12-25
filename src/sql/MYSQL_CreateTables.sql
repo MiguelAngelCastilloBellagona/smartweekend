@@ -81,26 +81,6 @@ CREATE TABLE Adress (
     CONSTRAINT CategoryUniqueKey UNIQUE (Adress_user)
 ) engine=InnoDB;
 
--- ------------------------------ Email -------------------------------------
-
-CREATE TABLE Email (
-    Email_id 				BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	Email_confirmation		bool DEFAULT 0,
-    Email_adress_id 		BIGINT UNSIGNED ,
-	Email_file		 		VARCHAR(128), 
-	Email_fileName	 		VARCHAR(128), 
-	Email_user_id           BIGINT UNSIGNED NOT NULL,
-	Email_case 				VARCHAR(128) NOT NULL,
-	Email_body		 		MEDIUMTEXT,
-	Email_senddate			datetime,
-	email_Date				datetime,
-    CONSTRAINT Email_PK PRIMARY KEY(Email_id )
-) engine=InnoDB;
-
- CREATE INDEX EmailByAdressId ON Email (Email_adress_id);
- CREATE INDEX EmailByUserId ON Email (Email_user_id);
- CREATE INDEX EmailIndexConfirmation ON Email (Email_confirmation) USING BTREE;
-
 -- ------------------------------ EmailTemplate -------------------------------------
 
 CREATE TABLE EmailTemplate (
@@ -172,9 +152,6 @@ CREATE TABLE Event (
  CREATE INDEX EventIndexByEvent_Name ON Event (Event_name);
 
 -- FOREING KEY
-
- ALTER TABLE Email ADD CONSTRAINT fk_email_adress FOREIGN KEY ( Email_adress_id ) REFERENCES Adress (Adress_id) ON DELETE SET NULL ON UPDATE CASCADE;
- ALTER TABLE Email ADD CONSTRAINT fk_email_user FOREIGN KEY ( Email_user_id ) REFERENCES User (User_id) ON DELETE CASCADE ON UPDATE CASCADE;
 
  ALTER TABLE EmailTemplate ADD CONSTRAINT fk_emailtemplate_adress FOREIGN KEY( EmailTemplate_adress_id ) REFERENCES Adress (Adress_id) ON UPDATE CASCADE ON DELETE SET NULL;
 

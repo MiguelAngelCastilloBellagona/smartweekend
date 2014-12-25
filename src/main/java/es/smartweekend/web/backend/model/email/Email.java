@@ -15,23 +15,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
-import es.smartweekend.web.backend.jersey.util.JsonDateDeserializer;
-import es.smartweekend.web.backend.jersey.util.JsonDateSerializer;
-import es.smartweekend.web.backend.jersey.util.JsonEntityIdSerializer;
 import es.smartweekend.web.backend.model.adress.Adress;
 import es.smartweekend.web.backend.model.user.User;
 
@@ -39,49 +23,16 @@ import es.smartweekend.web.backend.model.user.User;
  * @author Miguel Ángel Castillo Bellagona
  * @version 2.1
  */
-@Entity
-@Table(name = "Email")
 public class Email {
 
-	@Column(name = "Email_id")
-	@SequenceGenerator(name = "emailIdGenerator", sequenceName = "emailSeq")
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "emailIdGenerator")
 	protected int emailId;
-	
-	@JsonSerialize(using = JsonEntityIdSerializer.class) 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "Email_Adress_id")
 	protected Adress direccionEnvio;
-	
-	@Column(name = "Email_confirmation")
-	protected boolean confirmation;
-	
-	@Column(name = "Email_file")
 	protected String rutaArchivo;
-	
-	@Column(name = "Email_fileName")
 	protected String nombreArchivo;
-	
-	@JsonSerialize(using = JsonEntityIdSerializer.class)
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "Email_user_id")
 	protected User destinatario;
-	
-	@Column(name = "case")
 	protected String asunto;
-	
-	@Column(name = "Email_body")
 	protected String mensaje;
-	
-	@JsonDeserialize(using = JsonDateDeserializer.class)
-	@JsonSerialize(using = JsonDateSerializer.class)
-	@Column(name = "Email_date")
 	protected Calendar sendDate;
-	
-	@JsonDeserialize(using = JsonDateDeserializer.class)
-	@JsonSerialize(using = JsonDateSerializer.class)
-	@Column(name = "Email_senddate")
 	protected Calendar date;
 
 	public Email() {
@@ -97,7 +48,6 @@ public class Email {
 		this.mensaje = mensaje;
 		this.date = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		this.sendDate = null;
-		this.confirmation = false;
 	}
 
 	public Email(Adress direccionEnvio, User destinatario, String mensaje) {
@@ -116,15 +66,7 @@ public class Email {
 	public void setEmailId(int emailId) {
 		this.emailId = emailId;
 	}
-
-	public boolean getConfirmation() {
-		return this.confirmation;
-	}
-
-	void setConfirmation(boolean confirmation) {
-		this.confirmation = confirmation;
-	}
-
+	
 	public Adress getDireccionEnvio() {
 		return this.direccionEnvio;
 	}
@@ -234,8 +176,7 @@ public class Email {
 			t.close();
 
 			this.setSendDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
-			this.setConfirmation(true);
-
+			
 			return true;
 		} 
 		catch (MessagingException e) 
@@ -243,7 +184,6 @@ public class Email {
 			e.printStackTrace();
 
 			this.setSendDate(null);
-			this.setConfirmation(false);
 
 			return false;
 		}

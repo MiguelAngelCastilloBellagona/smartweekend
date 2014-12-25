@@ -74,7 +74,6 @@ public class SendMailThread extends Thread {
 			t.close();
 
 			email.setSendDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
-			email.setConfirmation(true);
 
 			return true;
 		} 
@@ -83,7 +82,6 @@ public class SendMailThread extends Thread {
 			e.printStackTrace();
 
 			email.setSendDate(null);
-			email.setConfirmation(false);
 
 			return false;
 		}

@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.smartweekend.web.backend.jersey.util.ApplicationContextProvider;
-import es.smartweekend.web.backend.model.mailservice.MailService;
 import es.smartweekend.web.backend.model.user.User;
 import es.smartweekend.web.backend.model.userService.UserService;
 import es.smartweekend.web.backend.model.util.exceptions.ServiceException;
@@ -94,13 +93,9 @@ public class UserResource {
 	
 	@Autowired
     private UserService userService;
-	
-	@Autowired
-	private MailService mailService;
     
 	public UserResource(){
 		this.userService  = ApplicationContextProvider.getApplicationContext().getBean(UserService.class);
-		this.mailService = ApplicationContextProvider.getApplicationContext().getBean(MailService.class);
 		l = new ArrayList<String>();
 		l.add(s[0]);l.add(s[1]);l.add(s[2]);l.add(s[3]);l.add(s[4]);l.add(s[5]);l.add(s[6]);l.add(s[7]);
 	}

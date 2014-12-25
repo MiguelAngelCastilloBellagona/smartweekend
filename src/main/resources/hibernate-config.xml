@@ -14,7 +14,6 @@
 
 		<!-- List of persistent classes -->
 		<mapping class="es.smartweekend.web.backend.model.adress.Adress" />
-		<mapping class="es.smartweekend.web.backend.model.email.Email" />
 		<mapping class="es.smartweekend.web.backend.model.emailTemplate.EmailTemplate" />
 		<mapping class="es.smartweekend.web.backend.model.user.User" />
 		<mapping class="es.smartweekend.web.backend.model.newsItem.NewsItem" />

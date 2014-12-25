@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     		tabla.put("#tiemporestante",Integer.toString(minutos));
 			 		
     		Email e = emailTemplateDao.findByName("passwordRecover").generateEmail(user, tabla);
-
+    		
     		if(e.sendMail()) userDao.save(user);
     		
     		return true;
