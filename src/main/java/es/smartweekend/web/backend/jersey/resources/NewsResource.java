@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,25 +34,34 @@ public class NewsResource {
 	@Path("/getPublishedNews/query")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<NewsItem> getPublishedNewsItem(
+	public Response getPublishedNewsItem(
 			@PathParam("eventId")                                int eventId,
 			@DefaultValue("1") @QueryParam("page")               int page, 
 			@DefaultValue("0") @QueryParam("pageTam")            int pageTam,
 			@DefaultValue("publishDate") @QueryParam("orderBy")  String orderBy,
-			@DefaultValue("1") @QueryParam("desc")               int desc
-			) throws ServiceException {
+			@DefaultValue("1") @QueryParam("desc")               int desc ) {
 		int startIndex = page*pageTam - pageTam;
 		int cont = pageTam;
 		boolean b = true;
 		if(desc==0) b = false;
-		return newsService.getPublishedNewsItemFromEvent(eventId,startIndex,cont,orderBy,b);
+		try {
+			List<NewsItem> l =  newsService.getPublishedNewsItemFromEvent(eventId,startIndex,cont,orderBy,b);
+			return Response.status(200).entity(l).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 	
 	@Path("/getPublishedNewsTAM/{eventId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public long getPublishedNewsItemTam(@HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) throws ServiceException {
-		return newsService.getPublishedNewsItemTamFromEvent(eventId);
+	public Response getPublishedNewsItemTam(@HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) {
+		try {
+			long l = newsService.getPublishedNewsItemTamFromEvent(eventId);
+			return Response.status(200).entity(l).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 
 	//USER
@@ -63,54 +73,83 @@ public class NewsResource {
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public NewsItem NewsADMIN(@HeaderParam("sessionId") String sessionId, NewsItem newsItem) throws ServiceException {
-		return newsService.addNewsADMIN(sessionId, newsItem);
+	public Response NewsADMIN(@HeaderParam("sessionId") String sessionId, NewsItem newsItem) {
+		try {
+			NewsItem n = newsService.addNewsADMIN(sessionId, newsItem);
+			return Response.status(200).entity(n).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 	
 	@Path("/admin/{newsItemId}")
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public NewsItem changeNewsDataADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId, NewsItem newsData) throws ServiceException {
-		return newsService.changeNewsDataADMIN(sessionId, newsItemId, newsData);
+	public Response changeNewsDataADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId, NewsItem newsData) {
+		try {
+			NewsItem n = newsService.changeNewsDataADMIN(sessionId, newsItemId, newsData);
+			return Response.status(200).entity(n).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 	
 	@Path("/admin/{newsItemId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public NewsItem getNewsItemADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) throws ServiceException {
-		return newsService.getNewsItemADMIN(sessionId, newsItemId);
+	public Response getNewsItemADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) {
+		try {
+			NewsItem n =  newsService.getNewsItemADMIN(sessionId, newsItemId);
+			return Response.status(200).entity(n).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 
 	
 	@Path("/admin/getAllNews/{eventId}/query")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<NewsItem> getAllNewsItemADMIN(@HeaderParam("sessionId") String sessionId,
+	public Response getAllNewsItemADMIN(@HeaderParam("sessionId") String sessionId,
 			@PathParam("eventId")                                int eventId,
 			@DefaultValue("1") @QueryParam("page")               int page, 
 			@DefaultValue("0") @QueryParam("pageTam")            int pageTam,
 			@DefaultValue("publishDate") @QueryParam("orderBy")  String orderBy,
-			@DefaultValue("1") @QueryParam("desc")               int desc
-			) throws ServiceException {
+			@DefaultValue("1") @QueryParam("desc")               int desc ) {
 		int startIndex = page*pageTam - pageTam;
 		int cont = pageTam;
 		boolean b = true;
 		if(desc==0) b = false;
-		return newsService.getAllNewsItemADMINFromEvent(sessionId,eventId,startIndex,cont,orderBy,b);
+		try {
+			List<NewsItem> l = newsService.getAllNewsItemADMINFromEvent(sessionId,eventId,startIndex,cont,orderBy,b);
+			return Response.status(200).entity(l).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
     
 	@Path("/admin/getAllNewsTAM/{eventId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public long getAllNewsItemTamADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) throws ServiceException {
-		return newsService.getAllNewsItemTamADMINFromEvent(sessionId,eventId);
+	public Response getAllNewsItemTamADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) {
+		try {
+			long l = newsService.getAllNewsItemTamADMINFromEvent(sessionId,eventId);
+			return Response.status(200).entity(l).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 
 	@Path("/admin/removeNewsItem/{newsItemId}")
 	@DELETE
-    public void removeNewsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) throws ServiceException {
-		newsService.removeNewsADMIN(sessionId, newsItemId);
+    public Response removeNewsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) {
+		try {
+			newsService.removeNewsADMIN(sessionId, newsItemId);
+			return Response.status(203).build();
+		} catch (ServiceException e) {
+			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
+		}
 	}
 	
 }
