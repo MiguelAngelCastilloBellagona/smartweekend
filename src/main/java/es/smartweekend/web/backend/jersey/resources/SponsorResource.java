@@ -29,6 +29,7 @@ import es.smartweekend.web.backend.model.util.session.SessionManager;
 /**
  * @author Miguel Ángel Castillo Bellagona
  */
+@Path("sponsor")
 public class SponsorResource {
 
 	private String[] s = {"sponsorId","name","url","imageurl","event"};

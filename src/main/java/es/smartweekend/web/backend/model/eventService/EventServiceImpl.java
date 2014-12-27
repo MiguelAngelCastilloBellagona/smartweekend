@@ -1,13 +1,21 @@
 package es.smartweekend.web.backend.model.eventService;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.smartweekend.web.backend.model.emailTemplate.EmailTemplate;
 import es.smartweekend.web.backend.model.event.Event;
+import es.smartweekend.web.backend.model.event.EventDao;
+import es.smartweekend.web.backend.model.user.User;
+import es.smartweekend.web.backend.model.user.UserDao;
+import es.smartweekend.web.backend.model.util.exceptions.InstanceException;
 import es.smartweekend.web.backend.model.util.exceptions.ServiceException;
+import es.smartweekend.web.backend.model.util.session.SessionManager;
 
 /**
  * @author Miguel Ángel Castillo Bellagona
@@ -16,30 +24,50 @@ import es.smartweekend.web.backend.model.util.exceptions.ServiceException;
 @Transactional
 public class EventServiceImpl implements EventService {
 
+	private static final String EVENTVICEPERMISIONLEVEL = "E";
+	
+	@Autowired
+	EventDao eventDao;
+	
+	@Autowired
+	UserDao userDao;
+	
+	@Transactional(readOnly=true)
+	public boolean checkPermissions(User user, String permisionLevelRequired) {
+		try {
+			return userDao.find(user.getUserId()).getPremissions().contains(permisionLevelRequired);
+		} catch (InstanceException e) {
+			return false;
+		}
+	}
+	
 	//ANONYMOUS
 	
 	@Override
 	public Event getEvent(int eventId) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getEventRules(int eventId) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return eventDao.find(eventId);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+		}
 	}
 
 	@Override
 	public boolean eventIsOpen(int eventId) throws ServiceException {
-		// TODO Auto-generated method stub
-		return false;
+		Event event;
+		try {
+			event = eventDao.find(eventId);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+		}
+		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		if(now.after(event.getStartDate()) && now.before(event.getEndDate())) return true;
+		else return false;
 	}
 
 	@Override
 	public List<Event> getAllEvents() throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		return eventDao.getAllEvents();
 	}
 	
 	//USER
@@ -50,8 +78,22 @@ public class EventServiceImpl implements EventService {
 	@Override
 	public Event createEventADMIN(String sessionId, Event event)
 			throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		if(eventDao.findEventByName(event.getName())!=null) throw new ServiceException(ServiceException.DUPLICATED_FIELD,"name");
+		if(event.getName()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"name");
+		if(event.getDescription()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"description");
+		if(event.getNormas()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"normas");
+		if(event.getStartDate()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"startDate");
+		if(event.getEndDate()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"endDate");
+		if(event.getRegistrationOpenDate()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"registrationOpenDate");
+		if(event.getRegistrationCloseDate()==null) throw new ServiceException(ServiceException.MISSING_FIELD,"registrationCloseDate");
+    	eventDao.save(event);
+    	return event;
 	}
 
 	@Override

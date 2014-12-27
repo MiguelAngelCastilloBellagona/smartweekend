@@ -14,8 +14,6 @@ public interface EventService {
 	//ANONYMOUS
 	
 	public Event getEvent(int eventId) throws ServiceException;
-	
-	public String getEventRules(int eventId) throws ServiceException;
 
 	public boolean eventIsOpen(int eventId) throws ServiceException;
 	
