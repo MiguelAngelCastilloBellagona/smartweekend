@@ -250,5 +250,20 @@ public class Event {
 	public void setNormas(String normas) {
 		this.normas = normas;
 	}
+	
+	public class EventBasicData {
+		
+		public String name;
+		public long id;
+		
+		public EventBasicData(String name, long id) {
+			this.name = name;
+			this.id = id;
+		}
+	}
+	
+	public EventBasicData getEventBasicData() {
+		return new EventBasicData(this.name,this.eventId);
+	}
 
 }

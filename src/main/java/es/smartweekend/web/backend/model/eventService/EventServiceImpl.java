@@ -16,6 +16,8 @@ import es.smartweekend.web.backend.model.util.exceptions.ServiceException;
 @Transactional
 public class EventServiceImpl implements EventService {
 
+	//ANONYMOUS
+	
 	@Override
 	public Event getEvent(int eventId) throws ServiceException {
 		// TODO Auto-generated method stub
@@ -39,6 +41,11 @@ public class EventServiceImpl implements EventService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	//USER
+	
+	
+	//ADMIN
 
 	@Override
 	public Event createEventADMIN(String sessionId, Event event)
