@@ -36,6 +36,7 @@ public class NewsResource {
 
 	private String[] s = {"newsItemId","title","creationDate","publishDate","content","publisher","publisher.login","event"};
 	private ArrayList<String> l;
+	private SimpleDateFormat dateFormat;
 	
 	@Autowired
 	private NewsService newsService;
@@ -44,8 +45,16 @@ public class NewsResource {
 		this.newsService  = ApplicationContextProvider.getApplicationContext().getBean(NewsService.class);
 		l = new ArrayList<String>();
 		l.add(s[0]);l.add(s[1]);l.add(s[2]);l.add(s[3]);l.add(s[4]);l.add(s[5]);l.add(s[6]);l.add(s[7]);
+		dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss");
 	}
 	
+	public void showContextData(String name,Request request) {
+		if(request!=null) { 
+			String ip = request.getRemoteAddr();
+			Calendar now = Calendar.getInstance();
+			System.out.format("%30s%30s%30s", "[" + name + "]", "from: [" + ip + "]", "[" + dateFormat.format(now.getTime()) + "]\n");
+		}
+	}
 	
 	//ANONYMOUS
 	
@@ -59,12 +68,7 @@ public class NewsResource {
 			@DefaultValue("0") @QueryParam("pageTam")            int pageTam,
 			@DefaultValue("publishDate") @QueryParam("orderBy")  String orderBy,
 			@DefaultValue("1") @QueryParam("desc")               int desc ) {
-		if(request!=null) {
-			String ip = request.getRemoteAddr();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss");
-			Calendar now = Calendar.getInstance();
-			System.out.println("[getPublishedNewsItem]\t from: [" + ip + "]\t at: [" + dateFormat.format(now.getTime()) + "]");
-		}
+		showContextData("getPublishedNewsItem",request);
 		int startIndex = page*pageTam - pageTam;
 		int cont = pageTam;
 		boolean b = true;
@@ -83,13 +87,7 @@ public class NewsResource {
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getPublishedNewsItemTam(@Context Request request, @PathParam("eventId") int eventId) {
-		if(request!=null) {
-			String ip = request.getRemoteAddr();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss");
-			Calendar now = Calendar.getInstance();
-			System.out.println("[getPublishedNewsItemTam]\t from: [" + ip + "]\t at: [" + dateFormat.format(now.getTime()) + "]");
-		}
-
+		showContextData("getPublishedNewsItemTam",request);
 		try {
 			long l = newsService.getPublishedNewsItemTamFromEvent(eventId);
 			return Response.status(200).entity(l).build();
@@ -108,7 +106,8 @@ public class NewsResource {
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response NewsADMIN(@HeaderParam("sessionId") String sessionId, NewsItem newsItem) {
+	public Response NewsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, NewsItem newsItem) {
+		showContextData("NewsADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			NewsItem n = newsService.addNewsADMIN(sessionId, newsItem);
@@ -123,7 +122,8 @@ public class NewsResource {
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response changeNewsDataADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId, NewsItem newsData) {
+	public Response changeNewsDataADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId, NewsItem newsData) {
+		showContextData("changeNewsDataADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			NewsItem n = newsService.changeNewsDataADMIN(sessionId, newsItemId, newsData);
@@ -137,7 +137,8 @@ public class NewsResource {
 	@Path("/admin/{newsItemId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getNewsItemADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) {
+	public Response getNewsItemADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) {
+		showContextData("getNewsItemADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			NewsItem n =  newsService.getNewsItemADMIN(sessionId, newsItemId);
@@ -152,12 +153,14 @@ public class NewsResource {
 	@Path("/admin/getAllNews/{eventId}/query")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllNewsItemADMIN(@HeaderParam("sessionId") String sessionId,
+	public Response getAllNewsItemADMIN(@Context Request request,
+			@HeaderParam("sessionId") String sessionId,
 			@PathParam("eventId")                                int eventId,
 			@DefaultValue("1") @QueryParam("page")               int page, 
 			@DefaultValue("0") @QueryParam("pageTam")            int pageTam,
 			@DefaultValue("publishDate") @QueryParam("orderBy")  String orderBy,
 			@DefaultValue("1") @QueryParam("desc")               int desc ) {
+		showContextData("getAllNewsItemADMIN",request);
 		int startIndex = page*pageTam - pageTam;
 		int cont = pageTam;
 		boolean b = true;
@@ -176,7 +179,8 @@ public class NewsResource {
 	@Path("/admin/getAllNewsTAM/{eventId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllNewsItemTamADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) {
+	public Response getAllNewsItemTamADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) {
+		showContextData("getAllNewsItemTamADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			long l = newsService.getAllNewsItemTamADMINFromEvent(sessionId,eventId);
@@ -189,7 +193,8 @@ public class NewsResource {
 
 	@Path("/admin/removeNewsItem/{newsItemId}")
 	@DELETE
-    public Response removeNewsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) {
+    public Response removeNewsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId) {
+		showContextData("removeNewsADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			newsService.removeNewsADMIN(sessionId, newsItemId);
