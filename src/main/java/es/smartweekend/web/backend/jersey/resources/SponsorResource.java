@@ -58,6 +58,7 @@ public class SponsorResource {
 			List<Sponsor> lista = sponsorService.getAllEventSponsor(eventId);
 			return Response.status(200).entity(lista).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -84,6 +85,7 @@ public class SponsorResource {
 			List<Sponsor> lista = sponsorService.getAllSponsorADMIN(sessionId, startIndex, cont, orderBy, b);
 			return Response.status(200).entity(lista).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -98,6 +100,7 @@ public class SponsorResource {
 			return Response.status(200).entity(i).build();
 		}
 		catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -112,6 +115,7 @@ public class SponsorResource {
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -127,6 +131,7 @@ public class SponsorResource {
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 		
@@ -143,6 +148,7 @@ public class SponsorResource {
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -156,6 +162,7 @@ public class SponsorResource {
 			return Response.status(204 ).build();
 		}
 		catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}

@@ -52,9 +52,10 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.glassfish.jersey</groupId>
-				<artifactId>jersey-bom</artifactId> 
-				 <!-- <version>2.13</version> -->
-				<version>2.4.1</version> 
+				<artifactId>jersey-bom</artifactId>
+				<!-- <version>2.13</version> -->
+				<version>2.14</version>
+				<!-- <version>2.4.1</version> -->
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -86,7 +87,7 @@
 		</dependency>
 
 		<!-- Spring -->
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -108,14 +109,14 @@
 			<version>4.1.1.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
-        
-        
+
+
 		<!-- Dependencias de Jersey -->
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
@@ -126,7 +127,7 @@
 			<artifactId>connection-pool</artifactId>
 			<version>2.3.14</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
@@ -137,6 +138,13 @@
 			<groupId>com.thetransactioncompany</groupId>
 			<artifactId>cors-filter</artifactId>
 			<version>2.2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- Dependencias de JUnit -->
@@ -228,8 +236,8 @@
 				<version>3.1</version>
 				<inherited>true</inherited>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 

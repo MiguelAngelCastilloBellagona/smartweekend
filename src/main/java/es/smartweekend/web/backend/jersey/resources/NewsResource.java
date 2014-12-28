@@ -1,6 +1,8 @@
 package es.smartweekend.web.backend.jersey.resources;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -13,9 +15,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.grizzly.http.server.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.smartweekend.web.backend.jersey.util.ApplicationContextProvider;
@@ -49,11 +53,18 @@ public class NewsResource {
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getPublishedNewsItem(
+			@Context Request request,
 			@PathParam("eventId")                                int eventId,
 			@DefaultValue("1") @QueryParam("page")               int page, 
 			@DefaultValue("0") @QueryParam("pageTam")            int pageTam,
 			@DefaultValue("publishDate") @QueryParam("orderBy")  String orderBy,
 			@DefaultValue("1") @QueryParam("desc")               int desc ) {
+		if(request!=null) {
+			String ip = request.getRemoteAddr();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss");
+			Calendar now = Calendar.getInstance();
+			System.out.println("[getPublishedNewsItem]\t from: [" + ip + "]\t at: [" + dateFormat.format(now.getTime()) + "]");
+		}
 		int startIndex = page*pageTam - pageTam;
 		int cont = pageTam;
 		boolean b = true;
@@ -63,6 +74,7 @@ public class NewsResource {
 			List<NewsItem> l =  newsService.getPublishedNewsItemFromEvent(eventId,startIndex,cont,orderBy,b);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -70,11 +82,19 @@ public class NewsResource {
 	@Path("/getPublishedNewsTAM/{eventId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getPublishedNewsItemTam(@HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId) {
+	public Response getPublishedNewsItemTam(@Context Request request, @PathParam("eventId") int eventId) {
+		if(request!=null) {
+			String ip = request.getRemoteAddr();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss");
+			Calendar now = Calendar.getInstance();
+			System.out.println("[getPublishedNewsItemTam]\t from: [" + ip + "]\t at: [" + dateFormat.format(now.getTime()) + "]");
+		}
+
 		try {
 			long l = newsService.getPublishedNewsItemTamFromEvent(eventId);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -94,6 +114,7 @@ public class NewsResource {
 			NewsItem n = newsService.addNewsADMIN(sessionId, newsItem);
 			return Response.status(200).entity(n).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -108,6 +129,7 @@ public class NewsResource {
 			NewsItem n = newsService.changeNewsDataADMIN(sessionId, newsItemId, newsData);
 			return Response.status(200).entity(n).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -121,6 +143,7 @@ public class NewsResource {
 			NewsItem n =  newsService.getNewsItemADMIN(sessionId, newsItemId);
 			return Response.status(200).entity(n).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -145,6 +168,7 @@ public class NewsResource {
 			List<NewsItem> l = newsService.getAllNewsItemADMINFromEvent(sessionId,eventId,startIndex,cont,orderBy,b);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -158,6 +182,7 @@ public class NewsResource {
 			long l = newsService.getAllNewsItemTamADMINFromEvent(sessionId,eventId);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -168,8 +193,9 @@ public class NewsResource {
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			newsService.removeNewsADMIN(sessionId, newsItemId);
-			return Response.status(203).build();
+			return Response.status(204).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}

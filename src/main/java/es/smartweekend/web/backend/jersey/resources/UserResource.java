@@ -110,6 +110,7 @@ public class UserResource {
 			User u = userService.addUser(user);
 			return Response.status(201).entity(u).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -122,6 +123,7 @@ public class UserResource {
 			boolean b =  userService.passwordRecover(email);
 			return Response.status(200).entity(b).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}	
@@ -135,6 +137,7 @@ public class UserResource {
 			SessionData u = userService.login(loginData.getLogin(), loginData.getPassword());
 			return Response.status(200).entity(u).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -149,6 +152,7 @@ public class UserResource {
 			SessionManager.removeSession(sessionId);
 			return Response.status(204).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -161,6 +165,7 @@ public class UserResource {
 			userService.removeUserUSER(sessionId);
 			return Response.status(204).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -174,6 +179,7 @@ public class UserResource {
 			userService.changeUserDataUSER(sessionId, user);
 			return Response.status(204).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -187,6 +193,7 @@ public class UserResource {
 			userService.changeUserPasswordUSER(sessionId, data.getOldPassword(), data.getNewPassword());
 			return Response.status(204).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -200,6 +207,7 @@ public class UserResource {
 			User u = userService.getCurrenUserUSER(sessionId);
 			return Response.status(200).entity(u).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -213,6 +221,7 @@ public class UserResource {
 			String p = userService.getUserPermissionsUSER(sessionId);
 			return Response.status(200).entity(p).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -228,6 +237,7 @@ public class UserResource {
 			List<Session> l = userService.getAllUserSessionsADMIN(sessionId,userId);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -240,6 +250,7 @@ public class UserResource {
 			userService.closeAllUserSessionsADMIN(sessionId,userId);
 			return Response.status(203).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}	
 	}
@@ -263,6 +274,7 @@ public class UserResource {
 			List<User> l = userService.getAllUsersADMIN(sessionId,startIndex,cont,orderBy,b);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -276,6 +288,7 @@ public class UserResource {
 			long l = userService.getAllUsersTAMADMIN(sessionId);
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -289,6 +302,7 @@ public class UserResource {
 			userService.removeUserADMIN(sessionId, userId);
 			return Response.status(203).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -302,6 +316,7 @@ public class UserResource {
 			userService.changeUserDataADMIN(sessionId, userId, user);
 			return Response.status(203).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -315,6 +330,7 @@ public class UserResource {
 			userService.changeUserPasswordADMIN(sessionId, userId, data.getOldPassword(), data.getNewPassword());
 			return Response.status(203).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -328,6 +344,7 @@ public class UserResource {
 			String s = userService.getUserPermissionsADMIN(sessionId, userId);
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -341,6 +358,7 @@ public class UserResource {
 			String s = userService.addUserPermissionsADMIN(sessionId, userId, permission);
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}
@@ -354,6 +372,7 @@ public class UserResource {
 			String s = userService.removeUserPermissionsADMIN(sessionId, userId, permission);
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
+			System.out.println(e.toString());
 			return Response.status(e.getHttpErrorCode()).entity(e.toString()).build();
 		}
 	}

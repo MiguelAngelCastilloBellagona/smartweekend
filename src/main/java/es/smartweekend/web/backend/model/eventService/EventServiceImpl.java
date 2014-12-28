@@ -82,6 +82,22 @@ public class EventServiceImpl implements EventService {
 	
 	//ADMIN
 
+	@Transactional(readOnly = true)
+	@Override
+	public Event getEventADMIN(String sessionId, int eventId) throws ServiceException {
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			return eventDao.find(eventId);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+		}
+	}
+	
 	@Transactional
 	@Override
 	public Event createEventADMIN(String sessionId, Event event)
@@ -155,6 +171,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void SetSetPaidTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
@@ -174,6 +191,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void setOnQueueTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
@@ -193,6 +211,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void setOutstandingTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
@@ -212,6 +231,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void setOutOfDateTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
@@ -231,6 +251,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void setFromQueueToOutstandingADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
@@ -250,6 +271,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public EmailTemplate GetSetPaidTemplateADMIN(String sessionId, int eventId)
 			throws ServiceException {
@@ -267,6 +289,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public EmailTemplate GetOnQueueTemplateADMIN(String sessionId, int eventId)
 			throws ServiceException {
@@ -283,7 +306,8 @@ public class EventServiceImpl implements EventService {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
 		}
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
 	public EmailTemplate GetOutstandingTemplateADMIN(String sessionId,
 			int eventId) throws ServiceException {
@@ -301,6 +325,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public EmailTemplate GetOutOfDateTemplateADMIN(String sessionId, int eventId)
 			throws ServiceException {
@@ -318,6 +343,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public EmailTemplate GetFromQueueToOutstandingADMIN(String sessionId,
 			int eventId) throws ServiceException {

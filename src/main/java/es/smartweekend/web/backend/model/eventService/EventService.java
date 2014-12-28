@@ -24,6 +24,8 @@ public interface EventService {
 	
 	//ADMIN
 	
+	public Event getEventADMIN(String sessionId, int eventId) throws ServiceException;
+	
 	public Event createEventADMIN(String sessionId, Event event) throws ServiceException;
 	
 	public void removeEventADMIN(String sessionId, int eventId) throws ServiceException;
