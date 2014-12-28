@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.smartweekend.web.backend.model.emailTemplate.EmailTemplate;
+import es.smartweekend.web.backend.model.emailTemplate.EmailTemplateDao;
 import es.smartweekend.web.backend.model.event.Event;
 import es.smartweekend.web.backend.model.event.EventDao;
 import es.smartweekend.web.backend.model.user.User;
@@ -32,6 +33,9 @@ public class EventServiceImpl implements EventService {
 	@Autowired
 	UserDao userDao;
 	
+	@Autowired
+	EmailTemplateDao emailTemplateDao;
+	
 	@Transactional(readOnly=true)
 	public boolean checkPermissions(User user, String permisionLevelRequired) {
 		try {
@@ -43,6 +47,7 @@ public class EventServiceImpl implements EventService {
 	
 	//ANONYMOUS
 	
+	@Transactional(readOnly = true)
 	@Override
 	public Event getEvent(int eventId) throws ServiceException {
 		try {
@@ -51,7 +56,8 @@ public class EventServiceImpl implements EventService {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
 		}
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
 	public boolean eventIsOpen(int eventId) throws ServiceException {
 		Event event;
@@ -65,6 +71,7 @@ public class EventServiceImpl implements EventService {
 		else return false;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<Event> getAllEvents() throws ServiceException {
 		return eventDao.getAllEvents();
@@ -75,6 +82,7 @@ public class EventServiceImpl implements EventService {
 	
 	//ADMIN
 
+	@Transactional
 	@Override
 	public Event createEventADMIN(String sessionId, Event event)
 			throws ServiceException {
@@ -96,88 +104,235 @@ public class EventServiceImpl implements EventService {
     	return event;
 	}
 
+	@Transactional
 	@Override
 	public void removeEventADMIN(String sessionId, int eventId)
 			throws ServiceException {
-		// TODO Auto-generated method stub
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			eventDao.remove(eventId);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 
 	}
 
+	@Transactional
 	@Override
 	public Event changeEventDataADMIN(String sessionId, int eventId,
 			Event eventData) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+		
+			//int oldNumParticipants = event.getNumParticipants();
+    		event.setEventId(eventId);
+    		if(eventData.getName()!=null) event.setName(eventData.getName());
+    		if(eventData.getDescription()!=null) event.setDescription(eventData.getDescription());
+    	    if(eventData.getNumParticipants()>0) event.setNumParticipants(eventData.getNumParticipants());
+    	    if(eventData.getMinimunAge()>=0) event.setMinimunAge(eventData.getMinimunAge());
+    	    if(eventData.getPrice()>=0) event.setPrice(eventData.getPrice());
+    		if(eventData.getStartDate()!=null) event.setStartDate(eventData.getStartDate());
+    		if(eventData.getEndDate()!=null) event.setEndDate(eventData.getEndDate()); 
+    		if(eventData.getRegistrationOpenDate()!=null) event.setRegistrationOpenDate(eventData.getRegistrationOpenDate());
+    		if(eventData.getRegistrationCloseDate()!=null) event.setRegistrationCloseDate(eventData.getRegistrationCloseDate());
+        	eventDao.save(event);
+        	//if(eventData.getNumParticipants()>oldNumParticipants) eventNumParticipantsChanged(sessionId,eventId);
+        	if(eventData.getNormas()!=null) event.setNormas(eventData.getNormas());
+        	return event;
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 	}
 
 	@Override
 	public void SetSetPaidTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
-		// TODO Auto-generated method stub
-
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			event.setSetPaidTemplate(emailTemplateDao.find(emailTemplateId));
+			eventDao.save(event);
+		} catch (InstanceException e) {
+			if (e.getClassName().contentEquals("Event")) throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+			else throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"EmailTemplate");
+		}
 	}
 
 	@Override
 	public void setOnQueueTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
-		// TODO Auto-generated method stub
-
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			event.setOnQueueTemplate(emailTemplateDao.find(emailTemplateId));
+			eventDao.save(event);
+		} catch (InstanceException e) {
+			if (e.getClassName().contentEquals("Event")) throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+			else throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"EmailTemplate");
+		}
 	}
 
 	@Override
 	public void setOutstandingTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
-		// TODO Auto-generated method stub
-
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			event.setOutstandingTemplate(emailTemplateDao.find(emailTemplateId));
+			eventDao.save(event);
+		} catch (InstanceException e) {
+			if (e.getClassName().contentEquals("Event")) throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+			else throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"EmailTemplate");
+		}
 	}
 
 	@Override
 	public void setOutOfDateTemplateADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
-		// TODO Auto-generated method stub
-
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			event.setOutOfDateTemplate(emailTemplateDao.find(emailTemplateId));
+			eventDao.save(event);
+		} catch (InstanceException e) {
+			if (e.getClassName().contentEquals("Event")) throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+			else throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"EmailTemplate");
+		}
 	}
 
 	@Override
 	public void setFromQueueToOutstandingADMIN(String sessionId, int eventId,
 			int emailTemplateId) throws ServiceException {
-		// TODO Auto-generated method stub
-
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			event.setFromQueueToOutstanding(emailTemplateDao.find(emailTemplateId));
+			eventDao.save(event);
+		} catch (InstanceException e) {
+			if (e.getClassName().contentEquals("Event")) throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"Event");
+			else throw new  ServiceException(ServiceException.INSTANCE_NOT_FOUND,"EmailTemplate");
+		}
 	}
 
 	@Override
 	public EmailTemplate GetSetPaidTemplateADMIN(String sessionId, int eventId)
 			throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			return event.getSetPaidTemplate();
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 	}
 
 	@Override
 	public EmailTemplate GetOnQueueTemplateADMIN(String sessionId, int eventId)
 			throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			return event.getOnQueueTemplate();
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 	}
 
 	@Override
 	public EmailTemplate GetOutstandingTemplateADMIN(String sessionId,
 			int eventId) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			return event.getOutstandingTemplate();
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 	}
 
 	@Override
 	public EmailTemplate GetOutOfDateTemplateADMIN(String sessionId, int eventId)
 			throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			return event.getOutOfDateTemplate();
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 	}
 
 	@Override
 	public EmailTemplate GetFromQueueToOutstandingADMIN(String sessionId,
 			int eventId) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), EVENTVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+		try {
+			Event event = eventDao.find(eventId);
+			return event.getFromQueueToOutstanding();
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
+		}
 	}
 
 }
