@@ -80,7 +80,7 @@ public class Main {
 		return GrizzlyHttpServerFactory.createHttpServer(SERVER_URI, rc, IS_SECURE, new SSLEngineConfigurator(sslContext).setClientMode(false).setNeedClientAuth(true));
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		// Spring context initialization.
 		@SuppressWarnings("resource")
@@ -112,7 +112,11 @@ public class Main {
 		//Añadir parte estatica en la siguente linea
 		server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("//web//frontend"),"/");
 		System.out.println(String.format("Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...", properties.getProperty("server.baseUri")));
-		System.in.read();
-		//server.shutdownNow();
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		server.shutdownNow();
 	}
 }

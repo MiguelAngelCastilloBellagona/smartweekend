@@ -14,12 +14,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.grizzly.http.server.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.smartweekend.web.backend.jersey.util.ApplicationContextProvider;
+import es.smartweekend.web.backend.jersey.util.RequestControl;
 import es.smartweekend.web.backend.model.user.User;
 import es.smartweekend.web.backend.model.userService.UserService;
 import es.smartweekend.web.backend.model.util.exceptions.ServiceException;
@@ -105,9 +108,11 @@ public class UserResource {
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response adduser(User user) {
+	public Response adduser(@Context Request request, User user) {
 		try {
+			RequestControl.showContextData("adduser",request);
 			User u = userService.addUser(user);
+			if(request!=null) System.out.println("\tlogin = " + user.getLogin());
 			return Response.status(201).entity(u).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -118,9 +123,11 @@ public class UserResource {
 	@Path("/passwordrecover/")
 	@POST
 	@Consumes("text/plain")
-	public Response passwordRecover(String email) {
+	public Response passwordRecover(@Context Request request, String email) {
 		try {
+			RequestControl.showContextData("passwordRecover",request);
 			boolean b =  userService.passwordRecover(email);
+			if(request!=null) System.out.println("\temail {" + b + "} = " + email);
 			return Response.status(200).entity(b).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -132,9 +139,11 @@ public class UserResource {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(@HeaderParam("sessionId") String sessionId, LoginData loginData) {
+	public Response login(@Context Request request, @HeaderParam("sessionId") String sessionId, LoginData loginData) {
 		try {
+			RequestControl.showContextData("login",request);
 			SessionData u = userService.login(loginData.getLogin(), loginData.getPassword());
+			if(request!=null) System.out.println("\tlogin {" + loginData.getLogin() + "}");
 			return Response.status(200).entity(u).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -146,10 +155,12 @@ public class UserResource {
 	
 	@Path("/session/")
 	@DELETE
-	public Response closeSessionUSER(@HeaderParam("sessionId") String sessionId) {
+	public Response closeSessionUSER(@Context Request request, @HeaderParam("sessionId") String sessionId) {
 		try {
+			RequestControl.showContextData("closeSessionUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			SessionManager.removeSession(sessionId);
+			if(request!=null) System.out.println("\tsessionId {" + sessionId + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -159,10 +170,13 @@ public class UserResource {
 	
 	@DELETE
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response removeUserUSER(@HeaderParam("sessionId") String sessionId)  {
+	public Response removeUserUSER(@Context Request request, @HeaderParam("sessionId") String sessionId)  {
 		try {
+			RequestControl.showContextData("removeUserUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			userService.removeUserUSER(sessionId);
+			if(request!=null) System.out.println("\tlogin {" + login + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -173,10 +187,13 @@ public class UserResource {
 	@Path("/{userId}")
 	@PUT
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response changeDataUSER(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, User user) {
+	public Response changeDataUSER(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, User user) {
 		try {
+			RequestControl.showContextData("changeDataUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.changeUserDataUSER(sessionId, user);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -187,10 +204,13 @@ public class UserResource {
 	@Path("/changePassword/{userId}")
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response changePasswordUSER(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, ChangePasswordData data) {
+	public Response changePasswordUSER(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, ChangePasswordData data) {
 		try {
+			RequestControl.showContextData("changePasswordUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.changeUserPasswordUSER(sessionId, data.getOldPassword(), data.getNewPassword());
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -201,10 +221,12 @@ public class UserResource {
 	@Path("/currentUser/")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response currentUserUSER(@HeaderParam("sessionId") String sessionId) {
+	public Response currentUserUSER(@Context Request request, @HeaderParam("sessionId") String sessionId) {
 		try {
+			RequestControl.showContextData("currentUserUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			User u = userService.getCurrenUserUSER(sessionId);
+			if(request!=null) System.out.println("\tlogin {" + u.getLogin() + "}");
 			return Response.status(200).entity(u).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -215,10 +237,13 @@ public class UserResource {
 	@Path("/getPermissions/")
 	@GET
 	@Produces("text/plain")
-	public Response getUserPermissionsUSER(@HeaderParam("sessionId") String sessionId) {
+	public Response getUserPermissionsUSER(@Context Request request, @HeaderParam("sessionId") String sessionId) {
 		try {
+			RequestControl.showContextData("getUserPermissionsUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			String p = userService.getUserPermissionsUSER(sessionId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}");
 			return Response.status(200).entity(p).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -231,10 +256,14 @@ public class UserResource {
 	@Path("/admin/allUserSession/{userId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getSllUserSessionsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
+	public Response getSllUserSessionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
 		try {
+			RequestControl.showContextData("getSllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			List<Session> l = userService.getAllUserSessionsADMIN(sessionId,userId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -244,10 +273,14 @@ public class UserResource {
 	
 	@Path("/admin/closeAllUserSession/{userId}")
 	@DELETE
-	public Response closeAllUserSessionsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
+	public Response closeAllUserSessionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.closeAllUserSessionsADMIN(sessionId,userId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -258,12 +291,14 @@ public class UserResource {
 	@Path("/admin/getAllUser/query")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllUsersADMIN(@HeaderParam("sessionId") String sessionId,
+	public Response getAllUsersADMIN(@Context Request request, 
+			@HeaderParam("sessionId") String sessionId,
 			@PathParam("eventId")                          int eventId,
 			@DefaultValue("1") @QueryParam("page")         int page, 
 			@DefaultValue("0") @QueryParam("pageTam")      int pageTam,
 			@DefaultValue("login") @QueryParam("orderBy")  String orderBy,
 			@DefaultValue("1") @QueryParam("desc")         int desc) {
+		RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 		int startIndex = page*pageTam - pageTam;
 		int cont = pageTam;
 		boolean b = true;
@@ -272,6 +307,8 @@ public class UserResource {
 			if(l.indexOf(orderBy)<0) throw new ServiceException(ServiceException.INCORRECT_FIELD,"orderBy");
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			List<User> l = userService.getAllUsersADMIN(sessionId,startIndex,cont,orderBy,b);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}");
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -282,10 +319,13 @@ public class UserResource {
 	@Path("/admin/getAllUserTAM/")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllUsersTAMADMIN(@HeaderParam("sessionId") String sessionId) {
+	public Response getAllUsersTAMADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			long l = userService.getAllUsersTAMADMIN(sessionId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}");
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -296,10 +336,14 @@ public class UserResource {
 	@Path("/admin/delete/{userId}")
 	@DELETE
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response removeUserADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
+	public Response removeUserADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
 			userService.removeUserADMIN(sessionId, userId);
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -310,10 +354,14 @@ public class UserResource {
 	@Path("/admin/changeData/{userId}")
 	@PUT
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response changeDataADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, User user) {
+	public Response changeDataADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, User user) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.changeUserDataADMIN(sessionId, userId, user);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -324,10 +372,14 @@ public class UserResource {
 	@Path("/admin/changePassword/{userId}")
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response changePasswordADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, ChangePasswordData data) {
+	public Response changePasswordADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, ChangePasswordData data) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.changeUserPasswordADMIN(sessionId, userId, data.getOldPassword(), data.getNewPassword());
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -338,9 +390,13 @@ public class UserResource {
 	@Path("/admin/getPermissions/{userId}")
 	@GET
 	@Produces("text/plain")
-	public Response getUserPermissionsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
+	public Response getUserPermissionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
 			String s = userService.getUserPermissionsADMIN(sessionId, userId);
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
@@ -352,10 +408,14 @@ public class UserResource {
 	@Path("/admin/addPermissions/{userId}/{permission}")
 	@POST
 	@Produces("text/plain")
-	public Response addUserPermissionsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, @PathParam("permission") String permission) {
+	public Response addUserPermissionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, @PathParam("permission") String permission) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			String s = userService.addUserPermissionsADMIN(sessionId, userId, permission);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}\t" + "add {" + permission + "}");
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -366,10 +426,14 @@ public class UserResource {
 	@Path("/admin/removePermissions/{userId}/{permission}")
 	@DELETE
 	@Produces("text/plain")
-	public Response removeUserPermissionsADMIN(@HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, @PathParam("permission") String permission) {
+	public Response removeUserPermissionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, @PathParam("permission") String permission) {
 		try {
+			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			String s = userService.removeUserPermissionsADMIN(sessionId, userId, permission);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}\t" + "delete {" + permission + "}");
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());

@@ -14,7 +14,12 @@ public class SessionManager {
 	private static ConcurrentHashMap<String, Session> openSessions = new ConcurrentHashMap<String, Session>();
 	
 	public static boolean exists(String sessionId){
-		return openSessions.containsKey(sessionId);
+		Session s = openSessions.get(sessionId);
+		if(s!=null)  {
+			s.setLastAccessNow();
+			return true;
+		}
+		else return false;
 	}
 	
 	public static void addSession(Session s){

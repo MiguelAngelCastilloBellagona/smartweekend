@@ -42,6 +42,8 @@ public interface UserService {
 	
 	public void closeAllUserSessionsADMIN(String sessionId, int userId) throws ServiceException;
 	
+	public User getUserADMIN(String sessionId, int userId) throws ServiceException;
+	
 	public List<User> getAllUsersADMIN(String sessionId, int startIndex, int maxResults, String orderBy, boolean desc) throws ServiceException;
 	
 	public long getAllUsersTAMADMIN(String sessionId) throws ServiceException;

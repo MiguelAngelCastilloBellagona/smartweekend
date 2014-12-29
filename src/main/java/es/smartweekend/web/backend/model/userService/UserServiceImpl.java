@@ -273,6 +273,18 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional(readOnly = true)
+	public User getUserADMIN(String sessionId, int userId) throws ServiceException {
+		try { 
+			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), USERSERVICEPERMISIONLEVEL))
+				throw new ServiceException(ServiceException.PERMISSION_DENIED);
+			return userDao.find(userId);
+		} catch (InstanceException e) {
+			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"user");
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public List<User> getAllUsersADMIN(String sessionId, int startIndex,
 			int maxResults, String orderBy, boolean desc)
 			throws ServiceException {
