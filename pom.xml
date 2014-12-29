@@ -41,6 +41,7 @@
 				<dataSource.url>jdbc:mysql://localhost/smartweekend</dataSource.url>
 				<testDataSource.url>${dataSource.url}test</testDataSource.url>
 				<dataSource.createTablesScript>MYSQL_CreateTables.sql</dataSource.createTablesScript>
+				<dataSource.createDataScript>MYSQL_CreateData.sql</dataSource.createDataScript>
 
 				<!-- Hibernate properties -->
 				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
@@ -280,6 +281,7 @@
 						<basedir>${basedir}</basedir>
 						<includes>
 							<include>src/sql/${dataSource.createTablesScript}</include>
+							<include>src/sql/${dataSource.createDataScript}</include>
 						</includes>
 					</fileset>
 				</configuration>
