@@ -21,6 +21,7 @@ import es.smartweekend.web.backend.jersey.resources.NewsResource;
 import es.smartweekend.web.backend.jersey.resources.SponsorResource;
 import es.smartweekend.web.backend.jersey.resources.UserResource;
 import es.smartweekend.web.backend.jersey.util.CORSResponseFilter;
+import es.smartweekend.web.backend.jersey.util.CustomExceptionMapper;
 import es.smartweekend.web.backend.jersey.util.ServiceExceptionMapper;
 import es.smartweekend.web.backend.model.userService.UserService;
 import es.smartweekend.web.backend.model.util.session.SessionManager;
@@ -70,6 +71,7 @@ public class Main {
 		rc.register(EventResource.class);
 		
 		rc.register(CORSResponseFilter.class);
+		rc.register(CustomExceptionMapper.class);
 		
 		SSLContextConfigurator sslContext = new SSLContextConfigurator();
 		sslContext.setKeyStoreFile(KEYSTORE_FILE);
