@@ -44,7 +44,7 @@ public class SponsorDaoHibernate extends GenericDaoHibernate<Sponsor,Integer> im
 		Query query = getSession().createQuery(
 	        	"SELECT s " +
 		        "FROM Sponsor s " +
-		        "WHERE s.event.eventId = :eventId" +
+		        "WHERE s.event.eventId = :eventId " +
 	        	"ORDER BY s." + orderBy + aux).setParameter("eventId", eventId);
 		if(maxResults<1) return query.list();
 		else return query.setFirstResult(startindex).setMaxResults(maxResults).list();
@@ -55,7 +55,7 @@ public class SponsorDaoHibernate extends GenericDaoHibernate<Sponsor,Integer> im
 		return (long) getSession().createQuery(
 	        	"SELECT count(s) " +
 		        "FROM Sponsor s " +
-		        "WHERE s.event.eventId = :eventId"
+		        "WHERE s.event.eventId = :eventId "
 		        ).setParameter("eventId", eventId).uniqueResult();	
 	}
 

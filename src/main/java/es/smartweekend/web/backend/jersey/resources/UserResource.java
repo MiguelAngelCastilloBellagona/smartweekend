@@ -271,15 +271,15 @@ public class UserResource {
 		}
 	}
 	
-	@Path("/admin/closeAllUserSession/{userId}")
+	@Path("/admin/allUserSession/{userId}")
 	@DELETE
 	public Response closeAllUserSessionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
 		try {
 			RequestControl.showContextData("closeAllUserSessionsADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-			userService.closeAllUserSessionsADMIN(sessionId,userId);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
+			userService.closeAllUserSessionsADMIN(sessionId,userId);
 			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
@@ -387,7 +387,7 @@ public class UserResource {
 		}
 	}
 	
-	@Path("/admin/getPermissions/{userId}")
+	@Path("/admin/permissions/{userId}")
 	@GET
 	@Produces("text/plain")
 	public Response getUserPermissionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId) {
@@ -405,7 +405,7 @@ public class UserResource {
 		}
 	}
 	
-	@Path("/admin/addPermissions/{userId}/{permission}")
+	@Path("/admin/permissions/{userId}/{permission}")
 	@POST
 	@Produces("text/plain")
 	public Response addUserPermissionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, @PathParam("permission") String permission) {
@@ -423,7 +423,7 @@ public class UserResource {
 		}
 	}
 	
-	@Path("/admin/removePermissions/{userId}/{permission}")
+	@Path("/admin/permissions/{userId}/{permission}")
 	@DELETE
 	@Produces("text/plain")
 	public Response removeUserPermissionsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("userId") int userId, @PathParam("permission") String permission) {

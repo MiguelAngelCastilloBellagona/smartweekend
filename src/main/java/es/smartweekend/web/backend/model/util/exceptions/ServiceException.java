@@ -94,7 +94,7 @@ public class ServiceException extends Exception {
 	
 	@Override
 	public String toString() {
-		return "ServiceException {errorCode=" + errorCode + ", useCase=" + useCase + ", field=" + field + ", message=" + this.getMessage() + ", field=" + this.getField() + "}";
+		return "ServiceException {errorCode=" + errorCode + ", useCase=" + useCase + ", field=" + field + ", message=" + this.getMessage() + "}";
 	}
 	
 	public int getHttpErrorCode() {
