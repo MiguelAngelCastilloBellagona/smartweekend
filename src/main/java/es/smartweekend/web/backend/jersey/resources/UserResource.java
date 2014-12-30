@@ -112,7 +112,7 @@ public class UserResource {
 		try {
 			RequestControl.showContextData("adduser",request);
 			User u = userService.addUser(user);
-			if(request!=null) System.out.println("\tlogin = " + user.getLogin());
+			if(request!=null) System.out.println("login = " + user.getLogin());
 			return Response.status(201).entity(u).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -127,7 +127,7 @@ public class UserResource {
 		try {
 			RequestControl.showContextData("passwordRecover",request);
 			boolean b =  userService.passwordRecover(email);
-			if(request!=null) System.out.println("\temail {" + b + "} = " + email);
+			if(request!=null) System.out.println("email {" + b + "} = " + email);
 			return Response.status(200).entity(b).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -143,7 +143,7 @@ public class UserResource {
 		try {
 			RequestControl.showContextData("login",request);
 			SessionData u = userService.login(loginData.getLogin(), loginData.getPassword());
-			if(request!=null) System.out.println("\tlogin {" + loginData.getLogin() + "}");
+			if(request!=null) System.out.println("login {" + loginData.getLogin() + "}");
 			return Response.status(200).entity(u).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -160,7 +160,7 @@ public class UserResource {
 			RequestControl.showContextData("closeSessionUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			SessionManager.removeSession(sessionId);
-			if(request!=null) System.out.println("\tsessionId {" + sessionId + "}");
+			if(request!=null) System.out.println("sessionId {" + sessionId + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -176,7 +176,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			userService.removeUserUSER(sessionId);
-			if(request!=null) System.out.println("\tlogin {" + login + "}");
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -193,7 +193,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.changeUserDataUSER(sessionId, user);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}");
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -210,7 +210,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			userService.changeUserPasswordUSER(sessionId, data.getOldPassword(), data.getNewPassword());
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}");
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(204).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -226,7 +226,7 @@ public class UserResource {
 			RequestControl.showContextData("currentUserUSER",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			User u = userService.getCurrenUserUSER(sessionId);
-			if(request!=null) System.out.println("\tlogin {" + u.getLogin() + "}");
+			if(request!=null) System.out.println("login {" + u.getLogin() + "}");
 			return Response.status(200).entity(u).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -243,7 +243,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			String p = userService.getUserPermissionsUSER(sessionId);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}");
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(200).entity(p).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -263,7 +263,7 @@ public class UserResource {
 			List<Session> l = userService.getAllUserSessionsADMIN(sessionId,userId);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -280,7 +280,7 @@ public class UserResource {
 			userService.closeAllUserSessionsADMIN(sessionId,userId);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -308,7 +308,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			List<User> l = userService.getAllUsersADMIN(sessionId,startIndex,cont,orderBy,b);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}");
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -325,7 +325,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			long l = userService.getAllUsersTAMADMIN(sessionId);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}");
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(200).entity(l).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -343,7 +343,7 @@ public class UserResource {
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
 			userService.removeUserADMIN(sessionId, userId);
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -361,7 +361,7 @@ public class UserResource {
 			userService.changeUserDataADMIN(sessionId, userId, user);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -379,7 +379,7 @@ public class UserResource {
 			userService.changeUserPasswordADMIN(sessionId, userId, data.getOldPassword(), data.getNewPassword());
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			return Response.status(203).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -396,7 +396,7 @@ public class UserResource {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}");
 			String s = userService.getUserPermissionsADMIN(sessionId, userId);
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
@@ -415,7 +415,7 @@ public class UserResource {
 			String s = userService.addUserPermissionsADMIN(sessionId, userId, permission);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}\t" + "add {" + permission + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}\t" + "add {" + permission + "}");
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -433,7 +433,7 @@ public class UserResource {
 			String s = userService.removeUserPermissionsADMIN(sessionId, userId, permission);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			String target = userService.getUserADMIN(sessionId, userId).getLogin();
-			if(request!=null) System.out.println("\tlogin {" + login + "}\t" + "target {" + target + "}\t" + "delete {" + permission + "}");
+			if(request!=null) System.out.println("login {" + login + "}\t" + "target {" + target + "}\t" + "delete {" + permission + "}");
 			return Response.status(200).entity(s).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());

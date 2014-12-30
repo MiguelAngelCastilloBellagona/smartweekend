@@ -14,12 +14,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.grizzly.http.server.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.smartweekend.web.backend.jersey.util.ApplicationContextProvider;
+import es.smartweekend.web.backend.jersey.util.RequestControl;
 import es.smartweekend.web.backend.model.sponsor.Sponsor;
 import es.smartweekend.web.backend.model.sponsorService.SponsorService;
 import es.smartweekend.web.backend.model.userService.UserService;
@@ -53,9 +56,11 @@ public class SponsorResource {
 	@Path("/getAllEventSponsor/{eventId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllEventSponsor(@PathParam("eventId") int eventId) {
+	public Response getAllEventSponsor(@Context Request request, @PathParam("eventId") int eventId) {
+		RequestControl.showContextData("getAllEventSponsor",request);
 		try {
 			List<Sponsor> lista = sponsorService.getAllEventSponsor(eventId);
+			if(request!=null) System.out.println("eventid {" + Integer.toString(eventId) + "}");
 			return Response.status(200).entity(lista).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -70,11 +75,13 @@ public class SponsorResource {
 	@Path("/admin/getAllSponsor")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllSponsor(@HeaderParam("sessionId") String sessionId,
+	public Response getAllSponsorADMIN(@Context Request request,
+			@HeaderParam("sessionId") String sessionId,
 			@DefaultValue("1") @QueryParam("page") int page, 
 			@DefaultValue("0") @QueryParam("pageTam") int pageTam,
 			@DefaultValue("sponsorId") @QueryParam("orderBy") String orderBy,
 			@DefaultValue("1") @QueryParam("desc") int desc){
+		RequestControl.showContextData("getAllSponsorADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			if(l.indexOf(orderBy)<0) throw new ServiceException(ServiceException.INCORRECT_FIELD,"orderBy");
@@ -83,6 +90,8 @@ public class SponsorResource {
 			boolean b = true;
 			if(desc==0) b = false;
 			List<Sponsor> lista = sponsorService.getAllSponsorADMIN(sessionId, startIndex, cont, orderBy, b);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(200).entity(lista).build();
 		} catch (ServiceException e) {
 			System.out.println(e.toString());
@@ -93,10 +102,13 @@ public class SponsorResource {
 	@Path("/admin/getAllSponsorTAM")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getAllSponsor(@HeaderParam("sessionId") String sessionId) {
+	public Response getAllSponsorTAMADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId) {
 		try {
+			RequestControl.showContextData("getAllSponsorTAMADMIN",request);
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			long i = sponsorService.getAllSponsorTAMADMIN(sessionId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("login {" + login + "}");
 			return Response.status(200).entity(i).build();
 		}
 		catch (ServiceException e) {
@@ -108,10 +120,13 @@ public class SponsorResource {
 	@Path("/admin/getSpsonsor/{sponsorId}")
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getSponsor(@HeaderParam("sessionId") String sessionId, @PathParam("sponsorId") int sponsorId) {
+	public Response getSponsorADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("sponsorId") int sponsorId) {
+		RequestControl.showContextData("getSponsorADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			Sponsor s = sponsorService.getSponsorADMIN(sessionId, sponsorId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("login {" + login + "}\t" + "sponsorId {" + Integer.toString(sponsorId) + "}");
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
@@ -124,10 +139,13 @@ public class SponsorResource {
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response addSponsor(@HeaderParam("sessionId") String sessionId, Sponsor sponsor, @PathParam("eventId") int eventId) {
+	public Response addSponsorADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, Sponsor sponsor, @PathParam("eventId") int eventId) {
+		RequestControl.showContextData("addSponsorADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			Sponsor s = sponsorService.addSponsorToEventADMIN(sessionId, eventId, sponsor);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("login {" + login + "}\t" + "sponsorId {" + Integer.toString(s.getSponsorId()) + "}\t" + "sponsorName {" + s.getName() + "}");
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
@@ -141,10 +159,13 @@ public class SponsorResource {
 	@PUT
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response changeSponsor(@HeaderParam("sessionId") String sessionId, @PathParam("sponsorId") int sponsorId, Sponsor sponsorData) throws ServiceException {
+	public Response changeSponsorADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("sponsorId") int sponsorId, Sponsor sponsorData) throws ServiceException {
+		RequestControl.showContextData("changeSponsorADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			Sponsor s = sponsorService.changeSponsorADMIN(sessionId, sponsorId, sponsorData);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("login {" + login + "}\t" + "sponsorId {" + Integer.toString(s.getSponsorId()) + "}\t" + "sponsorName {" + s.getName() + "}");
 			return Response.status(200).entity(s).build();
 		}
 		catch (ServiceException e) {
@@ -155,10 +176,13 @@ public class SponsorResource {
 	
 	@Path("/admin/removeSpsonsor/{sponsorId}")
 	@DELETE
-	public Response removeSponsor(@HeaderParam("sessionId") String sessionId, int sponsorId) throws ServiceException {
+	public Response removeSponsorADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, int sponsorId) throws ServiceException {
+		RequestControl.showContextData("removeSponsorADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
 			sponsorService.removeSponsorADMIN(sessionId, sponsorId);
+			String login = userService.getCurrenUserUSER(sessionId).getLogin();
+			if(request!=null) System.out.println("login {" + login + "}\t" + "sponsorId {" + sponsorId + "}");
 			return Response.status(204 ).build();
 		}
 		catch (ServiceException e) {
