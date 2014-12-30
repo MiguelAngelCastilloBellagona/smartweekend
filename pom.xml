@@ -276,7 +276,7 @@
 					<password>${dataSource.password}</password>
 					<autocommit>true</autocommit>
 					<onError>continue</onError>
-					<orderFile>ascending</orderFile>
+					<orderFile>descending</orderFile>
 					<fileset>
 						<basedir>${basedir}</basedir>
 						<includes>
