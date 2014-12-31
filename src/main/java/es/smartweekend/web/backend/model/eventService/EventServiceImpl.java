@@ -135,7 +135,6 @@ public class EventServiceImpl implements EventService {
 		} catch (InstanceException e) {
 			throw new ServiceException(ServiceException.INSTANCE_NOT_FOUND,"event");
 		}
-
 	}
 
 	@Transactional
@@ -151,7 +150,6 @@ public class EventServiceImpl implements EventService {
 		try {
 			Event event = eventDao.find(eventId);
 		
-			//int oldNumParticipants = event.getNumParticipants();
     		event.setEventId(eventId);
     		if(eventData.getName()!=null) event.setName(eventData.getName());
     		if(eventData.getDescription()!=null) event.setDescription(eventData.getDescription());
@@ -163,7 +161,6 @@ public class EventServiceImpl implements EventService {
     		if(eventData.getRegistrationOpenDate()!=null) event.setRegistrationOpenDate(eventData.getRegistrationOpenDate());
     		if(eventData.getRegistrationCloseDate()!=null) event.setRegistrationCloseDate(eventData.getRegistrationCloseDate());
         	eventDao.save(event);
-        	//if(eventData.getNumParticipants()>oldNumParticipants) eventNumParticipantsChanged(sessionId,eventId);
         	if(eventData.getNormas()!=null) event.setNormas(eventData.getNormas());
         	return event;
 		} catch (InstanceException e) {

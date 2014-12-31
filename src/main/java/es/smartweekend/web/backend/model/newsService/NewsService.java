@@ -18,7 +18,7 @@ public interface NewsService {
 	
 	//ADMIN
 	
-	public NewsItem addNewsADMIN(String sessionId, NewsItem newsItem) throws ServiceException;
+	public NewsItem addNewsADMIN(String sessionId, int eventId, NewsItem newsItem) throws ServiceException;
 	
 	public NewsItem changeNewsDataADMIN(String sessionId, int newsItemId, NewsItem newsData) throws ServiceException;
 	

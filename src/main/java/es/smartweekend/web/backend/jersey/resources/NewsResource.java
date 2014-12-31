@@ -9,6 +9,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -98,15 +99,15 @@ public class NewsResource {
 	
 	//ADMIN
 	
-	@Path("/admin")
+	@Path("/admin/addNewsItemToEvent/{eventId}")
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response addNewsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, NewsItem newsItem) {
+	public Response addNewsADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("eventId") int eventId, NewsItem newsItem) {
 		RequestControl.showContextData("addNewsADMIN",request);
 		try {
 			if(!SessionManager.exists(sessionId)) throw new ServiceException(ServiceException.INVALID_SESSION);
-			NewsItem n = newsService.addNewsADMIN(sessionId, newsItem);
+			NewsItem n = newsService.addNewsADMIN(sessionId, eventId, newsItem);
 			String login = userService.getCurrenUserUSER(sessionId).getLogin();
 			if(request!=null) System.out.println("login {" + login + "}\t" + "title {" + n.getTitle() + "}"); 
 			return Response.status(200).entity(n).build();
@@ -117,7 +118,7 @@ public class NewsResource {
 	}
 	
 	@Path("/admin/{newsItemId}")
-	@POST
+	@PUT
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response changeNewsDataADMIN(@Context Request request, @HeaderParam("sessionId") String sessionId, @PathParam("newsItemId") int newsItemId, NewsItem newsData) {

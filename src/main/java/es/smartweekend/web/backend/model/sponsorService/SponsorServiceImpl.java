@@ -55,6 +55,7 @@ public class SponsorServiceImpl implements SponsorService {
 	// ADMIN
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sponsor> getAllSponsorADMIN(String sessionId, int startIndex, int cont, String orderBy, boolean desc)
 			throws ServiceException {
 		try { 
@@ -66,6 +67,8 @@ public class SponsorServiceImpl implements SponsorService {
 		return sponsorDao.getAll(startIndex, cont, orderBy, desc);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
 	public long getAllSponsorTAMADMIN(String sessionId) throws ServiceException {
 		try { 
 			if(!checkPermissions(userDao.find(SessionManager.getSession(sessionId).getUserId()), SPONSORVICEPERMISIONLEVEL))
@@ -77,6 +80,7 @@ public class SponsorServiceImpl implements SponsorService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Sponsor getSponsorADMIN(String sessionId, int sponsorId)
 			throws ServiceException {
 		try { 
@@ -93,6 +97,7 @@ public class SponsorServiceImpl implements SponsorService {
 	}
 
 	@Override
+	@Transactional
 	public Sponsor addSponsorToEventADMIN(String sessionId, int eventId, Sponsor sponsor)
 			throws ServiceException {
 		try { 
@@ -114,6 +119,7 @@ public class SponsorServiceImpl implements SponsorService {
 	}
 
 	@Override
+	@Transactional
 	public Sponsor changeSponsorADMIN(String sessionId, int sponsorId,
 			Sponsor sponsorData) throws ServiceException {
 		try { 
@@ -135,6 +141,7 @@ public class SponsorServiceImpl implements SponsorService {
 	}
 
 	@Override
+	@Transactional
 	public void removeSponsorADMIN(String sessionId, int sponsorId)
 			throws ServiceException {
 		try { 
